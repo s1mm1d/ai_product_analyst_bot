@@ -1,0 +1,1468 @@
+{
+  "name": "Telegram Product Analytics Assistant with Multi-Stage LLM Analysis",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "c355b8c9-d0c9-4e3f-ba88-93780134dbff",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        704
+      ],
+      "webhookId": "95a035d0-a371-47d1-880f-ac04725a8845",
+      "credentials": {
+        "telegramApi": {
+          "id": "bwQNSMiONov0LKKj",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "message_text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "chat_id",
+              "value": "={{ $json.message.chat.id }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "user_id",
+              "value": "={{ $json.message.from.id }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "timestamp",
+              "value": "={{ $json.message.date }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "77f04df3-cd06-4310-9786-fb1a300ddce6",
+      "name": "Extract Message Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Extract Message Data').item.json.message_text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an expert data analyst. Convert the user's task into a structured problem statement. Identify: business goal, analysis goal, task type, key entities, and assumptions. Be thorough and detailed in your analysis."
+        }
+      },
+      "id": "d04045fc-42ed-4168-8eca-213fb08942ef",
+      "name": "Frame Problem",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1376,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"business_goal\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"analysis_goal\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"task_type\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"entities\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t},\n\t\t\"assumptions\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t}\n\t}\n}",
+        "autoFix": true
+      },
+      "id": "979791dc-adf3-48d8-badb-a7622783e608",
+      "name": "Problem Statement Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1452,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an expert data analyst. Generate testable hypotheses based on the problem statement. Provide detailed rationale for each hypothesis explaining why it matters and how it relates to the business goal."
+        }
+      },
+      "id": "83e2c34d-faa9-4337-a92b-2953039dba37",
+      "name": "Generate Hypotheses",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1820,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"hypotheses\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"object\",\n\t\t\t\t\"properties\": {\n\t\t\t\t\t\"hypothesis\": {\n\t\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t\t},\n\t\t\t\t\t\"rationale\": {\n\t\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n}",
+        "autoFix": true
+      },
+      "id": "0438e4a6-2bea-4ab9-a01a-14ed63810432",
+      "name": "Hypotheses Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1896,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an expert data analyst. Select appropriate metrics for the analysis. Include primary metrics, secondary metrics, and guardrail metrics. Provide clear definitions for each metric."
+        }
+      },
+      "id": "adde1885-5ad9-49e5-a475-7e17b9807d78",
+      "name": "Select Metrics",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2264,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"primary_metrics\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"object\",\n\t\t\t\t\"properties\": {\n\t\t\t\t\t\"name\": {\n\t\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t\t},\n\t\t\t\t\t\"definition\": {\n\t\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t},\n\t\t\"secondary_metrics\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"object\",\n\t\t\t\t\"properties\": {\n\t\t\t\t\t\"name\": {\n\t\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t\t},\n\t\t\t\t\t\"definition\": {\n\t\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t},\n\t\t\"guardrail_metrics\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"object\",\n\t\t\t\t\"properties\": {\n\t\t\t\t\t\"name\": {\n\t\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t\t},\n\t\t\t\t\t\"definition\": {\n\t\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n}",
+        "autoFix": true
+      },
+      "id": "664700ef-1439-4989-acc0-a79f1315bc83",
+      "name": "Metrics Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2340,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an expert data analyst. Identify comprehensive data requirements including data sources, tables, fields, events, and time windows needed for the analysis."
+        }
+      },
+      "id": "7923bd07-1e3f-4bcd-aac6-66f3569ee434",
+      "name": "Identify Data Requirements",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2708,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"data_sources\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t},\n\t\t\"tables\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t},\n\t\t\"fields\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t},\n\t\t\"events\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t},\n\t\t\"time_window\": {\n\t\t\t\"type\": \"object\",\n\t\t\t\"properties\": {\n\t\t\t\t\"start\": {\n\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t},\n\t\t\t\t\"end\": {\n\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n}",
+        "autoFix": true
+      },
+      "id": "659eb09d-07cc-499f-8d99-3792042782a2",
+      "name": "Data Requirements Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2784,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Задача:\n{{ $json.text }}\n\nТип задачи:\n{{ $json.task_type }}\n\nГипотезы:\n{{ $json.hypotheses }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a senior product analyst. Propose relevant customer segments for analysis. Identify priority segments that are most important for understanding the problem."
+        }
+      },
+      "id": "daf9f617-7e86-4ce4-a8c4-c47dd1a46099",
+      "name": "Define Segments",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        3152,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"segments\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t},\n\t\t\"priority_segments\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t}\n\t}\n}",
+        "autoFix": true
+      },
+      "id": "61e79b84-aee8-4a7c-91a9-fe23b9c2cf1a",
+      "name": "Segments Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        3228,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Задача:\n{{ $('Extract Message Data').item.json.message_text }}\n\nБизнес-цель:\n{{ $('Frame Problem').item.json.output.business_goal }}\n\nГипотезы:\n{{ $('Generate Hypotheses').item.json.output.hypotheses.map(h => h.hypothesis).join('\\n') }}\n\nPrimary metrics:\n{{ $('Select Metrics').item.json.output.primary_metrics.map(m => m.name + ': ' + m.definition).join('\\n') }}\n\nSecondary metrics:\n{{ $('Select Metrics').item.json.output.secondary_metrics.map(m => m.name + ': ' + m.definition).join('\\n') }}\n\nСегменты:\n{{ $('Define Segments').item.json.output.segments.join(', ') }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a senior product analyst. Create a concise analysis plan with exactly 5-7 clear, actionable steps. Each step should be specific but brief, describing the key action and expected insight. Number each step clearly. Focus on the most critical analysis activities only."
+        }
+      },
+      "id": "a69c7f88-f527-4714-bdac-016480c5c452",
+      "name": "Create Analysis Plan",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        3596,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\"type\": \"object\", \"properties\": {\"analysis_steps\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}, \"expected_outcome\": {\"type\": \"string\"}}}",
+        "autoFix": true
+      },
+      "id": "eac9bc5a-6793-4697-8c68-6357a94b91cd",
+      "name": "Analysis Plan Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        3672,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Задача:\n{{ $('Extract Message Data').item.json.message_text }}\n\nPrimary metrics:\n{{ $('Select Metrics').item.json.output.primary_metrics.map(m => m.name + ': ' + m.definition).join('\\n') }}\n\nSecondary metrics:\n{{ $('Select Metrics').item.json.output.secondary_metrics.map(m => m.name + ': ' + m.definition).join('\\n') }}\n\nSegments:\n{{ $('Define Segments').item.json.output.segments.join(', ') }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a senior product analyst. Suggest exactly 5 most important visualizations for the analysis. Explain the purpose of each visualization and what insights it will reveal. Focus on the most impactful charts only."
+        }
+      },
+      "id": "df5cf15c-184a-4e6c-bf63-4f47c62279a0",
+      "name": "Suggest Visualizations",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        4040,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"visualizations\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"object\",\n\t\t\t\t\"properties\": {\n\t\t\t\t\t\"chart_type\": {\n\t\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t\t},\n\t\t\t\t\t\"purpose\": {\n\t\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t\t},\n\t\t\t\t\t\"x\": {\n\t\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t\t},\n\t\t\t\t\t\"y\": {\n\t\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n}",
+        "autoFix": true
+      },
+      "id": "8329b90d-ba62-493e-80d8-76e7b5151f21",
+      "name": "Visualizations Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        4116,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Исходная задача:\n{{$json.text}}\n\nФормулировка:\n{{$json.problem_statement}}\n\nГипотезы:\n{{$json.hypotheses}}\n\nPrimary metrics:\n{{$json.primary_metrics}}\n\nSecondary metrics:\n{{$json.secondary_metrics}}\n\nGuardrail metrics:\n{{$json.guardrail_metrics}}\n\nИсточники данных:\n{{$json.tables_or_sources}}\n\nПоля:\n{{$json.required_fields}}\n\nСобытия:\n{{$json.events}}\n\nСегменты:\n{{$json.segments}}\n\nПлан анализа:\n{{$json.analysis_steps}}\n\nВизуализации:\n{{$json.visualizations}}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a reviewer of analytical plans. Evaluate the plan thoroughly. Provide a score, identify strengths, point out any issues or missing parts, and give a final verdict on the quality and completeness of the plan."
+        }
+      },
+      "id": "7c55369e-5be0-4513-acd7-6c8505569877",
+      "name": "Review Plan",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        4484,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"score\": {\n\t\t\t\"type\": \"number\"\n\t\t},\n\t\t\"strengths\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t},\n\t\t\"issues\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t},\n\t\t\"missing_parts\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t},\n\t\t\"final_verdict\": {\n\t\t\t\"type\": \"string\"\n\t\t}\n\t}\n}",
+        "autoFix": true
+      },
+      "id": "9025520b-b0b8-4c01-a2f5-407da8c1a75a",
+      "name": "Review Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        4560,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "formatted_response",
+              "value": "=📊 ANALYTICS PLAN\n\n🎯 PROBLEM\nGoal: {{ $('Frame Problem').item.json.output.business_goal }}\nType: {{ $('Frame Problem').item.json.output.task_type }}\n\n💡 HYPOTHESES ({{ $('Generate Hypotheses').item.json.output.hypotheses.length }})\n{{ $('Generate Hypotheses').item.json.output.hypotheses.map((h, i) => `${i + 1}. ${h.hypothesis}`).join('\\n') }}\n\n📊 KEY METRICS\nPrimary: {{ $('Select Metrics').item.json.output.primary_metrics.map(m => m.name).join(', ') }}\n{{ $('Select Metrics').item.json.output.secondary_metrics && $('Select Metrics').item.json.output.secondary_metrics.length > 0 ? `Secondary: ${$('Select Metrics').item.json.output.secondary_metrics.map(m => m.name).join(', ')}` : '' }}\n\n📁 DATA\nSources: {{ $('Identify Data Requirements').item.json.output.data_sources.join(', ') }}\nTables: {{ $('Identify Data Requirements').item.json.output.tables.join(', ') }}\nTime: {{ $('Identify Data Requirements').item.json.output.time_window.start }} - {{ $('Identify Data Requirements').item.json.output.time_window.end }}\n\n👥 SEGMENTS\n{{ $('Define Segments').item.json.output.priority_segments.map((s, i) => `${i + 1}. ${s}`).join('\\n') }}\n\n📋 PLAN ({{ $('Create Analysis Plan').item.json.output.analysis_steps.length }} steps)\n{{ $('Create Analysis Plan').item.json.output.analysis_steps.map((step, i) => `${i + 1}. ${step}`).join('\\n') }}\n\n📈 VISUALIZATIONS\n{{ $('Suggest Visualizations').item.json.output.visualizations && $('Suggest Visualizations').item.json.output.visualizations.length > 0 ? $('Suggest Visualizations').item.json.output.visualizations.map((v, i) => `${i + 1}. ${v.chart_type} - ${v.purpose}`).join('\\n') : 'None' }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "chat_id",
+              "value": "={{ $('Extract Message Data').item.json.chat_id }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "user_id",
+              "value": "={{ $('Extract Message Data').item.json.user_id }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "timestamp",
+              "value": "={{ $('Extract Message Data').item.json.timestamp }}",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "review_data",
+              "value": "=Score: {{ $('Review Plan').item.json.output.score }}/10\nVerdict: {{ $('Review Plan').item.json.output.final_verdict }}\nStrengths: {{ $('Review Plan').item.json.output.strengths.join('; ') }}\n{{ $('Review Plan').item.json.output.issues && $('Review Plan').item.json.output.issues.length > 0 ? `Issues: ${$('Review Plan').item.json.output.issues.join('; ')}` : 'No issues' }}\n{{ $('Review Plan').item.json.output.missing_parts && $('Review Plan').item.json.output.missing_parts.length > 0 ? `Missing: ${$('Review Plan').item.json.output.missing_parts.join('; ')}` : 'Nothing missing' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d4243fb9-8be3-41c7-860d-023cfbe5b973",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4928,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.chat_id}}",
+        "text": "=Part {{$json.part}}/{{$json.total_parts}}:\n\n{{$json.message_text}}",
+        "additionalFields": {}
+      },
+      "id": "cd1e7f63-c3ed-46db-8ffb-842895c44bce",
+      "name": "Send to Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        5824,
+        608
+      ],
+      "webhookId": "3143b02f-82df-465c-8982-65faaa1425fd",
+      "credentials": {
+        "telegramApi": {
+          "id": "bwQNSMiONov0LKKj",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "=analytics",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "formatted_response": "formatted_response",
+            "chat_id": "chat_id",
+            "timestamp": "timestamp",
+            "user_id": "user_id",
+            "review_data": "review_data"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "formatted_response",
+              "displayName": "formatted_response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "user_id",
+              "displayName": "user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "review_data",
+              "displayName": "review_data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "57b8f25d-24b2-408b-833a-f0bffcb0e80b",
+      "name": "Log to Data Table",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        5152,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "model": "ministral-8b-latest",
+        "options": {}
+      },
+      "id": "270aca09-ac6f-41bb-980c-cf2ff1021854",
+      "name": "Mistral Model - Frame",
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        1448,
+        928
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "eAZXc6g0BTd8uBeD",
+          "name": "Mistral Cloud account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "b822c04e-0762-4951-8df2-4112e8ebeddb",
+      "name": "Mistral Model - Hypotheses",
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        1892,
+        1136
+      ],
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "eAZXc6g0BTd8uBeD",
+          "name": "Mistral Cloud account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "556100df-25d5-49bc-9306-39e1a4d72ec8",
+      "name": "Mistral Model - Metrics",
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        2336,
+        1136
+      ],
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "eAZXc6g0BTd8uBeD",
+          "name": "Mistral Cloud account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "2d29fff8-7475-411e-ab5f-381a65aac844",
+      "name": "Mistral Model - Data",
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        2780,
+        1136
+      ],
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "eAZXc6g0BTd8uBeD",
+          "name": "Mistral Cloud account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "f7ac7ca2-849e-4b93-9f20-a2a39a27b3dd",
+      "name": "Mistral Model - Segments",
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        3224,
+        1136
+      ],
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "eAZXc6g0BTd8uBeD",
+          "name": "Mistral Cloud account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "73462c2d-f713-40b2-9568-aa800918799b",
+      "name": "Mistral Model - Plan",
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        3668,
+        1136
+      ],
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "sRwq5Lm0ErbCb3I8",
+          "name": "Mistral Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a4bd9bc9-2b3b-445d-84cf-59554528482c",
+      "name": "Mistral Model - Viz",
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        4112,
+        1136
+      ],
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "sRwq5Lm0ErbCb3I8",
+          "name": "Mistral Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "5ca3dd30-5836-45ab-b5f0-15a00bdf3305",
+      "name": "Mistral Model - Review",
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        4556,
+        1136
+      ],
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "sRwq5Lm0ErbCb3I8",
+          "name": "Mistral Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const MAX_LENGTH = 3800;\nconst text = $('Format Response').item.json.formatted_response;\nconst chatId = $('Format Response').item.json.chat_id;\nconst userId = $('Format Response').item.json.user_id;\nconst timestamp = $('Format Response').item.json.timestamp;\n\nconst chunks = [];\nlet currentChunk = '';\n\n// Split by lines to avoid breaking in the middle of content\nconst lines = text.split('\\n');\n\nfor (const line of lines) {\n  // If adding this line would exceed the limit, save current chunk and start new one\n  if (currentChunk.length + line.length + 1 > MAX_LENGTH && currentChunk.length > 0) {\n    chunks.push(currentChunk);\n    currentChunk = line;\n  } else {\n    currentChunk += (currentChunk ? '\\n' : '') + line;\n  }\n}\n\n// Add the last chunk\nif (currentChunk) {\n  chunks.push(currentChunk);\n}\n\n// Return array of items, one per chunk\nreturn chunks.map((chunk, index) => ({\n  json: {\n    message_text: chunk,\n    chat_id: chatId,\n    user_id: userId,\n    timestamp: timestamp,\n    part: index + 1,\n    total_parts: chunks.length\n  }\n}));"
+      },
+      "id": "19b9c8ba-48b1-415b-8c3d-0f3297115520",
+      "name": "Split Long Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5600,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message_text }}",
+                    "rightValue": "/form_problem",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "dc3db7bb-772e-4d9b-999c-a0fa630be630"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "command"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "regular_message"
+        }
+      },
+      "id": "56966cf8-234c-4ce0-9a91-896a1b36bf7a",
+      "name": "Check Message Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        704,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "🤖 Добро пожаловать в Analytics Assistant!\n\n📊 ЧТО ДЕЛАЕТ ЭТОТ БОТ:\nЯ помогаю формировать структурированные планы продуктовой аналитики на основе ваших задач.\n\n📥 ЧТО ОЖИДАЕТСЯ НА ВХОД:\nОпишите вашу аналитическую задачу или проблему в свободной форме. Например:\n• \"Почему упала конверсия в покупку?\"\n• \"Нужно проанализировать поведение новых пользователей\"\n• \"Как влияет новая фича на retention?\"\n\n📤 ЧТО ВЫ ПОЛУЧИТЕ:\nПодробный план анализа, включающий:\n✅ Формулировку проблемы и бизнес-цели\n✅ Гипотезы для проверки\n✅ Ключевые метрики (primary, secondary, guardrail)\n✅ Требования к данным (источники, таблицы, поля)\n✅ Сегменты для анализа\n✅ Пошаговый план действий\n✅ Рекомендации по визуализациям\n✅ Оценку качества плана\n\n💡 КАК НАЧАТЬ:\nПросто опишите вашу аналитическую задачу в следующем сообщении, и я проведу её через полный цикл анализа, включая формулировку проблемы, генерацию гипотез, подбор метрик, определение требований к данным и создание детального плана исследования 👇",
+        "additionalFields": {}
+      },
+      "id": "93077277-26e5-45bb-adad-a68eec7cf478",
+      "name": "Send Bot Description",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        928,
+        1104
+      ],
+      "webhookId": "308ff650-1294-4559-b4a6-428f9273d3a1",
+      "credentials": {
+        "telegramApi": {
+          "id": "bwQNSMiONov0LKKj",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "aOyKYQx0UWE5e1gW",
+          "mode": "list",
+          "cachedResultName": "user_status",
+          "cachedResultUrl": "/projects/mTH9irmicpxXxVgQ/datatables/aOyKYQx0UWE5e1gW"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "chat_id",
+              "keyValue": "={{ $json.chat_id }}"
+            }
+          ]
+        },
+        "limit": 1
+      },
+      "id": "9442e894-36ca-4c7b-bb46-e49da9c481d0",
+      "name": "Check User State",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        928,
+        504
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $('Check User State').item.json.last_command }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "rightValue": "/form_problem"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "27d74449-fb94-45e5-a02e-7da11efc1ed5",
+      "name": "Has Used Command Before?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1152,
+        504
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Extract Message Data').item.json.chat_id }}",
+        "text": "⚠️ Пожалуйста, сначала используйте команду /form\\_problem для получения инструкций по работе с ботом.",
+        "additionalFields": {}
+      },
+      "id": "0cc75716-1892-4178-add9-6035058629c4",
+      "name": "Send Command Required Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1486,
+        304
+      ],
+      "webhookId": "badac516-7a0c-49d7-a0cf-28f5a644628b",
+      "credentials": {
+        "telegramApi": {
+          "id": "bwQNSMiONov0LKKj",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "aOyKYQx0UWE5e1gW",
+          "mode": "list",
+          "cachedResultName": "user_status",
+          "cachedResultUrl": "/projects/mTH9irmicpxXxVgQ/datatables/aOyKYQx0UWE5e1gW"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "chat_id",
+              "keyValue": "={{ $json.chat_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "last_command",
+              "displayName": "last_command",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "44fbe0ae-b942-48df-ad5d-722c566477c3",
+      "name": "Record Command Usage",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1486,
+        1104
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "chat_id",
+              "value": "={{ $json.result.chat.id }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "last_command",
+              "value": "/form_problem",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "timestamp",
+              "value": "={{ $now.toUnixInteger() }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "19653a1f-7e9a-401b-8f54-8a61e47c37eb",
+      "name": "Prepare State Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1152,
+        1104
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "chat_id",
+              "value": "={{ $('Extract Message Data').item.json.chat_id }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "last_command",
+              "value": "request_submitted",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "timestamp",
+              "value": "={{ $now.toUnixInteger() }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e42ef3db-38de-4bab-99a0-af426d5ebcb0",
+      "name": "Prepare Request State",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5152,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "aOyKYQx0UWE5e1gW",
+          "mode": "list",
+          "cachedResultName": "user_status"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "chat_id",
+              "keyValue": "={{ $json.chat_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "last_command",
+              "displayName": "last_command",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "74c08769-b777-4813-bebd-28373032bfdf",
+      "name": "Update User State After Request",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        5376,
+        608
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Extract Message Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Message Data": {
+      "main": [
+        [
+          {
+            "node": "Check Message Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Problem Statement Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Frame Problem",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Frame Problem": {
+      "main": [
+        [
+          {
+            "node": "Generate Hypotheses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hypotheses Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Generate Hypotheses",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Hypotheses": {
+      "main": [
+        [
+          {
+            "node": "Select Metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Metrics Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Select Metrics",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Metrics": {
+      "main": [
+        [
+          {
+            "node": "Identify Data Requirements",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data Requirements Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Identify Data Requirements",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Identify Data Requirements": {
+      "main": [
+        [
+          {
+            "node": "Define Segments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Segments Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Define Segments",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Define Segments": {
+      "main": [
+        [
+          {
+            "node": "Create Analysis Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analysis Plan Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Create Analysis Plan",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Analysis Plan": {
+      "main": [
+        [
+          {
+            "node": "Suggest Visualizations",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Visualizations Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Suggest Visualizations",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Suggest Visualizations": {
+      "main": [
+        [
+          {
+            "node": "Review Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Review Plan",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review Plan": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Response": {
+      "main": [
+        [
+          {
+            "node": "Log to Data Table",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Prepare Request State",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Model - Frame": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Frame Problem",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Problem Statement Schema",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Model - Hypotheses": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Hypotheses",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Hypotheses Schema",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Model - Metrics": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Select Metrics",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Metrics Schema",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Model - Data": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Identify Data Requirements",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Data Requirements Schema",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Model - Segments": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Define Segments",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Segments Schema",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Model - Plan": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Create Analysis Plan",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Analysis Plan Schema",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Model - Viz": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Suggest Visualizations",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Visualizations Schema",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Model - Review": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Review Plan",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Review Schema",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Long Message": {
+      "main": [
+        [
+          {
+            "node": "Send to Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Message Type": {
+      "main": [
+        [
+          {
+            "node": "Send Bot Description",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check User State",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check User State": {
+      "main": [
+        [
+          {
+            "node": "Has Used Command Before?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Used Command Before?": {
+      "main": [
+        [
+          {
+            "node": "Frame Problem",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Command Required Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Bot Description": {
+      "main": [
+        [
+          {
+            "node": "Prepare State Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare State Data": {
+      "main": [
+        [
+          {
+            "node": "Record Command Usage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Request State": {
+      "main": [
+        [
+          {
+            "node": "Update User State After Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update User State After Request": {
+      "main": [
+        [
+          {
+            "node": "Split Long Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "any",
+    "availableInMCP": false
+  },
+  "versionId": "387bdabb-c120-40d9-bc1e-1b9b112af0f0",
+  "meta": {
+    "instanceId": "18a03f7879ffdda3c50fe25675372ba949a5756f98c20f1edf693c15fd9acc60"
+  },
+  "id": "Ujh56wNFmQ1MA1QA",
+  "tags": []
+}
