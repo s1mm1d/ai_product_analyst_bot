@@ -14,7 +14,7 @@
       "typeVersion": 1.2,
       "position": [
         256,
-        704
+        592
       ],
       "webhookId": "95a035d0-a371-47d1-880f-ac04725a8845",
       "credentials": {
@@ -62,7 +62,7 @@
       "typeVersion": 3.4,
       "position": [
         480,
-        704
+        592
       ]
     },
     {
@@ -71,7 +71,7 @@
         "text": "={{ $('Extract Message Data').item.json.message_text }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "You are an expert data analyst. Convert the user's task into a structured problem statement. Identify: business goal, analysis goal, task type, key entities, and assumptions. Be thorough and detailed in your analysis."
+          "systemMessage": "You are an expert data analyst. Evaluate if the user's request contains enough information to proceed with analysis. Be lenient - set is_clear to true if you can identify ANY business context or analysis direction, even if vague. Only set is_clear to false if the request is completely unclear or unrelated to analytics. Respond in the SAME LANGUAGE as the user's input. If unclear, provide brief clarification_needed in the user's language. If clear, convert the task into a structured problem statement identifying: business goal, analysis goal, task type, key entities, and assumptions."
         }
       },
       "id": "d04045fc-42ed-4168-8eca-213fb08942ef",
@@ -79,14 +79,14 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        1376,
-        496
+        1600,
+        672
       ]
     },
     {
       "parameters": {
         "schemaType": "manual",
-        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"business_goal\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"analysis_goal\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"task_type\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"entities\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t},\n\t\t\"assumptions\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t}\n\t}\n}",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"is_clear\": {\n\t\t\t\"type\": \"boolean\",\n\t\t\t\"description\": \"Whether the user request is clear enough to proceed with analysis\"\n\t\t},\n\t\t\"clarification_needed\": {\n\t\t\t\"type\": \"string\",\n\t\t\t\"description\": \"Explanation of what information is missing or unclear (only if is_clear is false)\"\n\t\t},\n\t\t\"business_goal\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"analysis_goal\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"task_type\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"entities\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t},\n\t\t\"assumptions\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t}\n\t},\n\t\"required\": [\"is_clear\"]\n}",
         "autoFix": true
       },
       "id": "979791dc-adf3-48d8-badb-a7622783e608",
@@ -94,8 +94,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        1452,
-        720
+        1680,
+        896
       ]
     },
     {
@@ -104,7 +104,7 @@
         "text": "={{ $json.output }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "You are an expert data analyst. Generate testable hypotheses based on the problem statement. Provide detailed rationale for each hypothesis explaining why it matters and how it relates to the business goal."
+          "systemMessage": "You are an expert data analyst. Generate testable hypotheses based on the problem statement. Provide detailed rationale for each hypothesis explaining why it matters and how it relates to the business goal. RESPOND IN THE SAME LANGUAGE as the input text."
         }
       },
       "id": "83e2c34d-faa9-4337-a92b-2953039dba37",
@@ -112,8 +112,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        1820,
-        704
+        2272,
+        1216
       ]
     },
     {
@@ -127,8 +127,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        1896,
-        928
+        2352,
+        1440
       ]
     },
     {
@@ -137,7 +137,7 @@
         "text": "={{ $json.output }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "You are an expert data analyst. Select appropriate metrics for the analysis. Include primary metrics, secondary metrics, and guardrail metrics. Provide clear definitions for each metric."
+          "systemMessage": "You are an expert data analyst. Select appropriate metrics for the analysis. Include primary metrics, secondary metrics, and guardrail metrics. Provide clear definitions for each metric. RESPOND IN THE SAME LANGUAGE as the input text."
         }
       },
       "id": "adde1885-5ad9-49e5-a475-7e17b9807d78",
@@ -145,8 +145,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        2264,
-        704
+        2720,
+        1216
       ]
     },
     {
@@ -160,8 +160,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        2340,
-        928
+        2800,
+        1440
       ]
     },
     {
@@ -170,7 +170,7 @@
         "text": "={{ $json.output }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "You are an expert data analyst. Identify comprehensive data requirements including data sources, tables, fields, events, and time windows needed for the analysis."
+          "systemMessage": "You are an expert data analyst. Identify comprehensive data requirements including data sources, tables, fields, events, and time windows needed for the analysis. RESPOND IN THE SAME LANGUAGE as the input text."
         }
       },
       "id": "7923bd07-1e3f-4bcd-aac6-66f3569ee434",
@@ -178,8 +178,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        2708,
-        704
+        3168,
+        1216
       ]
     },
     {
@@ -193,8 +193,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        2784,
-        928
+        3232,
+        1440
       ]
     },
     {
@@ -203,7 +203,7 @@
         "text": "=Задача:\n{{ $json.text }}\n\nТип задачи:\n{{ $json.task_type }}\n\nГипотезы:\n{{ $json.hypotheses }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "You are a senior product analyst. Propose relevant customer segments for analysis. Identify priority segments that are most important for understanding the problem."
+          "systemMessage": "You are a senior product analyst. Propose relevant customer segments for analysis. Identify priority segments that are most important for understanding the problem. RESPOND IN THE SAME LANGUAGE as the input text."
         }
       },
       "id": "daf9f617-7e86-4ce4-a8c4-c47dd1a46099",
@@ -211,8 +211,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        3152,
-        704
+        3600,
+        1216
       ]
     },
     {
@@ -226,8 +226,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        3228,
-        928
+        3680,
+        1440
       ]
     },
     {
@@ -236,7 +236,7 @@
         "text": "=Задача:\n{{ $('Extract Message Data').item.json.message_text }}\n\nБизнес-цель:\n{{ $('Frame Problem').item.json.output.business_goal }}\n\nГипотезы:\n{{ $('Generate Hypotheses').item.json.output.hypotheses.map(h => h.hypothesis).join('\\n') }}\n\nPrimary metrics:\n{{ $('Select Metrics').item.json.output.primary_metrics.map(m => m.name + ': ' + m.definition).join('\\n') }}\n\nSecondary metrics:\n{{ $('Select Metrics').item.json.output.secondary_metrics.map(m => m.name + ': ' + m.definition).join('\\n') }}\n\nСегменты:\n{{ $('Define Segments').item.json.output.segments.join(', ') }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "You are a senior product analyst. Create a concise analysis plan with exactly 5-7 clear, actionable steps. Each step should be specific but brief, describing the key action and expected insight. Number each step clearly. Focus on the most critical analysis activities only."
+          "systemMessage": "You are a senior product analyst. Create a concise analysis plan with exactly 5-7 clear, actionable steps. Each step should be specific but brief, describing the key action and expected insight. Number each step clearly. Focus on the most critical analysis activities only. RESPOND IN THE SAME LANGUAGE as the input text."
         }
       },
       "id": "a69c7f88-f527-4714-bdac-016480c5c452",
@@ -244,8 +244,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        3596,
-        704
+        4048,
+        1216
       ]
     },
     {
@@ -259,8 +259,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        3672,
-        928
+        4128,
+        1440
       ]
     },
     {
@@ -269,7 +269,7 @@
         "text": "=Задача:\n{{ $('Extract Message Data').item.json.message_text }}\n\nPrimary metrics:\n{{ $('Select Metrics').item.json.output.primary_metrics.map(m => m.name + ': ' + m.definition).join('\\n') }}\n\nSecondary metrics:\n{{ $('Select Metrics').item.json.output.secondary_metrics.map(m => m.name + ': ' + m.definition).join('\\n') }}\n\nSegments:\n{{ $('Define Segments').item.json.output.segments.join(', ') }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "You are a senior product analyst. Suggest exactly 5 most important visualizations for the analysis. Explain the purpose of each visualization and what insights it will reveal. Focus on the most impactful charts only."
+          "systemMessage": "You are a senior product analyst. Suggest exactly 5 most important visualizations for the analysis. Explain the purpose of each visualization and what insights it will reveal. Focus on the most impactful charts only. RESPOND IN THE SAME LANGUAGE as the input text."
         }
       },
       "id": "df5cf15c-184a-4e6c-bf63-4f47c62279a0",
@@ -277,8 +277,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        4040,
-        704
+        4496,
+        1216
       ]
     },
     {
@@ -292,17 +292,17 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        4116,
-        928
+        4576,
+        1440
       ]
     },
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Исходная задача:\n{{$json.text}}\n\nФормулировка:\n{{$json.problem_statement}}\n\nГипотезы:\n{{$json.hypotheses}}\n\nPrimary metrics:\n{{$json.primary_metrics}}\n\nSecondary metrics:\n{{$json.secondary_metrics}}\n\nGuardrail metrics:\n{{$json.guardrail_metrics}}\n\nИсточники данных:\n{{$json.tables_or_sources}}\n\nПоля:\n{{$json.required_fields}}\n\nСобытия:\n{{$json.events}}\n\nСегменты:\n{{$json.segments}}\n\nПлан анализа:\n{{$json.analysis_steps}}\n\nВизуализации:\n{{$json.visualizations}}",
+        "text": "=Исходная задача:\n{{ $('Extract Message Data').item.json.message_text }}\n\nПроблема:\n{{ JSON.stringify($('Frame Problem').item.json.output) }}\n\nГипотезы:\n{{ JSON.stringify($('Generate Hypotheses').item.json.output) }}\n\nМетрики:\n{{ JSON.stringify($('Select Metrics').item.json.output) }}\n\nДанные:\n{{ JSON.stringify($('Identify Data Requirements').item.json.output) }}\n\nСегменты:\n{{ JSON.stringify($('Define Segments').item.json.output) }}\n\nПлан:\n{{ JSON.stringify($('Create Analysis Plan').item.json.output) }}\n\nВизуализации:\n{{ JSON.stringify($('Suggest Visualizations').item.json.output) }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "You are a reviewer of analytical plans. Evaluate the plan thoroughly. Provide a score, identify strengths, point out any issues or missing parts, and give a final verdict on the quality and completeness of the plan."
+          "systemMessage": "Ты — эксперт по аналитике. Оцени предоставленный план анализа от 0 до 10 по критериям: 0-2 = отсутствуют ключевые разделы, 3-4 = есть проблема и гипотезы но нет метрик, 5-6 = все разделы есть но поверхностно, 7-8 = все разделы хорошего качества, 9-10 = идеально с временными рамками и сегментами. Выведи ТОЛЬКО JSON в формате: {\"score\": число, \"comment\": \"текст\"}. Не добавляй ничего кроме JSON."
         }
       },
       "id": "7c55369e-5be0-4513-acd7-6c8505569877",
@@ -310,14 +310,14 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        4484,
-        704
+        4944,
+        1216
       ]
     },
     {
       "parameters": {
         "schemaType": "manual",
-        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"score\": {\n\t\t\t\"type\": \"number\"\n\t\t},\n\t\t\"strengths\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t},\n\t\t\"issues\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t},\n\t\t\"missing_parts\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t},\n\t\t\"final_verdict\": {\n\t\t\t\"type\": \"string\"\n\t\t}\n\t}\n}",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"score\": {\n\t\t\t\"type\": \"number\",\n\t\t\t\"description\": \"Score from 0 to 10\"\n\t\t},\n\t\t\"comment\": {\n\t\t\t\"type\": \"string\",\n\t\t\t\"description\": \"Brief comment about the plan quality\"\n\t\t}\n\t},\n\t\"required\": [\"score\", \"comment\"]\n}",
         "autoFix": true
       },
       "id": "9025520b-b0b8-4c01-a2f5-407da8c1a75a",
@@ -325,8 +325,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        4560,
-        928
+        5008,
+        1440
       ]
     },
     {
@@ -360,7 +360,7 @@
             {
               "id": "id-5",
               "name": "review_data",
-              "value": "=Score: {{ $('Review Plan').item.json.output.score }}/10\nVerdict: {{ $('Review Plan').item.json.output.final_verdict }}\nStrengths: {{ $('Review Plan').item.json.output.strengths.join('; ') }}\n{{ $('Review Plan').item.json.output.issues && $('Review Plan').item.json.output.issues.length > 0 ? `Issues: ${$('Review Plan').item.json.output.issues.join('; ')}` : 'No issues' }}\n{{ $('Review Plan').item.json.output.missing_parts && $('Review Plan').item.json.output.missing_parts.length > 0 ? `Missing: ${$('Review Plan').item.json.output.missing_parts.join('; ')}` : 'Nothing missing' }}",
+              "value": "=Score: {{ $('Parse Review Result').item.json.score }}/10\nComment: {{ $('Parse Review Result').item.json.comment }}",
               "type": "string"
             }
           ]
@@ -372,8 +372,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        4928,
-        704
+        5600,
+        1360
       ]
     },
     {
@@ -387,8 +387,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        5824,
-        608
+        7840,
+        720
       ],
       "webhookId": "3143b02f-82df-465c-8982-65faaa1425fd",
       "credentials": {
@@ -408,11 +408,17 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "formatted_response": "formatted_response",
-            "chat_id": "chat_id",
-            "timestamp": "timestamp",
-            "user_id": "user_id",
-            "review_data": "review_data"
+            "chat_id": "={{ $json.chat_id }}",
+            "user_id": "={{ $json.user_id }}",
+            "timestamp": "={{ $json.timestamp }}",
+            "review_data": "={{ $json.review_data }}",
+            "formatted_response": "={{ $json.formatted_response }}",
+            "offline_score": "={{ $json.offline_score }}",
+            "offline_verdict": "={{ $json.offline_verdict }}",
+            "offline_match_quality": "={{ $json.offline_match_quality }}",
+            "offline_comment": "={{ $json.offline_comment }}",
+            "online_score": "={{ $json.online_score }}",
+            "online_comment": "={{ $json.online_comment }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -465,6 +471,66 @@
               "type": "string",
               "readOnly": false,
               "removed": false
+            },
+            {
+              "id": "offline_score",
+              "displayName": "offline_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "offline_verdict",
+              "displayName": "offline_verdict",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "offline_match_quality",
+              "displayName": "offline_match_quality",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "offline_comment",
+              "displayName": "offline_comment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "online_score",
+              "displayName": "online_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "online_comment",
+              "displayName": "online_comment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
             }
           ],
           "attemptToConvertTypes": false,
@@ -477,8 +543,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        5152,
-        800
+        7168,
+        528
       ]
     },
     {
@@ -491,8 +557,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
       "typeVersion": 1,
       "position": [
-        1448,
-        928
+        1680,
+        1104
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -511,8 +577,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
       "typeVersion": 1,
       "position": [
-        1892,
-        1136
+        2352,
+        1648
       ],
       "credentials": {
         "mistralCloudApi": {
@@ -530,8 +596,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
       "typeVersion": 1,
       "position": [
-        2336,
-        1136
+        2784,
+        1648
       ],
       "credentials": {
         "mistralCloudApi": {
@@ -549,8 +615,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
       "typeVersion": 1,
       "position": [
-        2780,
-        1136
+        3232,
+        1648
       ],
       "credentials": {
         "mistralCloudApi": {
@@ -568,8 +634,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
       "typeVersion": 1,
       "position": [
-        3224,
-        1136
+        3680,
+        1648
       ],
       "credentials": {
         "mistralCloudApi": {
@@ -587,8 +653,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
       "typeVersion": 1,
       "position": [
-        3668,
-        1136
+        4128,
+        1648
       ],
       "credentials": {
         "mistralCloudApi": {
@@ -606,8 +672,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
       "typeVersion": 1,
       "position": [
-        4112,
-        1136
+        4560,
+        1648
       ],
       "credentials": {
         "mistralCloudApi": {
@@ -625,8 +691,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
       "typeVersion": 1,
       "position": [
-        4556,
-        1136
+        5008,
+        1648
       ],
       "credentials": {
         "mistralCloudApi": {
@@ -644,8 +710,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        5600,
-        608
+        7616,
+        720
       ]
     },
     {
@@ -688,8 +754,8 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        704,
-        704
+        928,
+        880
       ]
     },
     {
@@ -703,8 +769,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        928,
-        1104
+        1152,
+        1280
       ],
       "webhookId": "308ff650-1294-4559-b4a6-428f9273d3a1",
       "credentials": {
@@ -739,8 +805,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        928,
-        504
+        1152,
+        688
       ]
     },
     {
@@ -772,8 +838,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        1152,
-        504
+        1376,
+        688
       ]
     },
     {
@@ -787,8 +853,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1486,
-        304
+        1712,
+        480
       ],
       "webhookId": "badac516-7a0c-49d7-a0cf-28f5a644628b",
       "credentials": {
@@ -862,8 +928,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        1486,
-        1104
+        1712,
+        1280
       ]
     },
     {
@@ -897,8 +963,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1152,
-        1104
+        1376,
+        1280
       ]
     },
     {
@@ -932,8 +998,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        5152,
-        608
+        7168,
+        720
       ]
     },
     {
@@ -999,9 +1065,485 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        5376,
-        608
+        7392,
+        720
       ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.output.is_clear }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "aedfdfe3-49f1-446f-ad10-127c8ce9601e",
+      "name": "Check Request Clarity",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2048,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Extract Message Data').item.json.chat_id }}",
+        "text": "=❓ ТРЕБУЕТСЯ УТОЧНЕНИЕ\n\nВаш запрос недостаточно конкретен для формирования плана анализа.\n\n{{ $('Frame Problem').item.json.output.clarification_needed }}\n\nПожалуйста, уточните ваш запрос, указав:\n• Конкретную бизнес-цель или проблему\n• Что именно вы хотите проанализировать\n• Какой результат вы ожидаете получить\n\nПосле этого я смогу создать детальный план исследования 🔍",
+        "additionalFields": {}
+      },
+      "id": "4e9576f6-8230-44fe-a21c-1fe758a2ead3",
+      "name": "Request Clarification",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2384,
+        816
+      ],
+      "webhookId": "ab7312ec-9c7d-4c95-9900-cef2670ab2fc",
+      "credentials": {
+        "telegramApi": {
+          "id": "bwQNSMiONov0LKKj",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Extract Message Data').item.json.chat_id }}",
+        "text": "=⏳ Начинаю анализ вашего запроса...\n\nЭто займет некоторое время. Пожалуйста, подождите — я формирую детальный план исследования 🔍",
+        "additionalFields": {}
+      },
+      "id": "3867259b-bed4-47cb-8189-0386ecd0bdcc",
+      "name": "Send Processing Notification",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2384,
+        624
+      ],
+      "webhookId": "ab7dfac1-d548-4cea-81c3-b30ae2afce09",
+      "credentials": {
+        "telegramApi": {
+          "id": "bwQNSMiONov0LKKj",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message_text }}",
+                    "rightValue": "/start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "1860ba23-d628-433b-beb0-1ac0b5e40935"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/start"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message_text }}",
+                    "rightValue": "/help",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "1a5c5bde-b20e-4f09-9027-d7df1455b5f5"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/help"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message_text }}",
+                    "rightValue": "/example",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "a8ef7e7a-53d3-454d-91ef-bbe8dfb9a986"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/example"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "process"
+        }
+      },
+      "id": "ec447678-121e-4c7c-be68-7303ba4edb43",
+      "name": "Filter Bot Commands",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        704,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "user_prompt",
+              "value": "={{ $('Extract Message Data').item.json.message_text }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "model_answer",
+              "value": "={{ $('Format Response').item.json.formatted_response }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "dataset",
+              "value": "={{ $('Dataset JSON').item.json.dataset }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1f98cc97-f11e-4a0f-9037-cc4ebc45cfc9",
+      "name": "Prepare Offline Evaluator Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6048,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.user_prompt }}\n\nModel Answer:\n{{ $json.model_answer }}\n\nDataset:\n{{ JSON.stringify($json.dataset) }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "Ты — строгий evaluator аналитических ответов.\n\nЗадача:\n1. Найти в dataset наиболее похожий prompt\n2. Взять соответствующий ideal_answer\n3. Сравнить с model_answer\n4. Выставить оценку по критериям:\n   - structure (0–2): структурированность и логичность ответа\n   - completeness (0–3): полнота покрытия всех аспектов задачи\n   - hypotheses_quality (0–2): качество и релевантность гипотез\n   - actionability (0–2): практичность и применимость рекомендаций\n   - relevance (0–1): соответствие исходному запросу\n\nВерни JSON со следующей структурой:\n{\n  \"match_quality\": number (0-10, насколько хорошо найден похожий prompt),\n  \"total_score\": number (сумма всех оценок),\n  \"verdict\": \"excellent\" | \"good\" | \"acceptable\" | \"weak\" | \"bad\",\n  \"scores\": {\n    \"structure\": number,\n    \"completeness\": number,\n    \"hypotheses_quality\": number,\n    \"actionability\": number,\n    \"relevance\": number\n  },\n  \"comment\": string (краткий комментарий на русском языке)\n}"
+        }
+      },
+      "id": "3135412c-57a1-4b7d-91db-e06fbe8db255",
+      "name": "Offline Evaluator",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        6272,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"match_quality\": {\n      \"type\": \"number\",\n      \"description\": \"Quality of matching the prompt to dataset (0-10)\"\n    },\n    \"total_score\": {\n      \"type\": \"number\",\n      \"description\": \"Sum of all criterion scores\"\n    },\n    \"verdict\": {\n      \"type\": \"string\",\n      \"enum\": [\"excellent\", \"good\", \"acceptable\", \"weak\", \"bad\"]\n    },\n    \"scores\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"structure\": {\"type\": \"number\"},\n        \"completeness\": {\"type\": \"number\"},\n        \"hypotheses_quality\": {\"type\": \"number\"},\n        \"actionability\": {\"type\": \"number\"},\n        \"relevance\": {\"type\": \"number\"}\n      }\n    },\n    \"comment\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\"match_quality\", \"total_score\", \"verdict\", \"scores\", \"comment\"]\n}",
+        "autoFix": true
+      },
+      "id": "99023662-450f-4d20-9043-bfdb44d60356",
+      "name": "Offline Evaluator Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        6352,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d8b1339b-8efb-420f-841b-ce0d9332ab7d",
+      "name": "Mistral Model - Offline Evaluator",
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        6352,
+        800
+      ],
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "sRwq5Lm0ErbCb3I8",
+          "name": "Mistral Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "6cacba47-e4f0-42b5-a206-d9db65901c2d",
+      "name": "Merge Evaluator Results",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        6720,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "formatted_response",
+              "value": "={{ $('Format Response').item.json.formatted_response }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "chat_id",
+              "value": "={{ $('Format Response').item.json.chat_id }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "user_id",
+              "value": "={{ $('Format Response').item.json.user_id }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "timestamp",
+              "value": "={{ $('Format Response').item.json.timestamp }}",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "review_data",
+              "value": "={{ $('Format Response').item.json.review_data }}",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "offline_score",
+              "value": "={{ $('Offline Evaluator').item.json.output.total_score }}",
+              "type": "number"
+            },
+            {
+              "id": "id-7",
+              "name": "offline_verdict",
+              "value": "={{ $('Offline Evaluator').item.json.output.verdict }}",
+              "type": "string"
+            },
+            {
+              "id": "id-8",
+              "name": "offline_match_quality",
+              "value": "={{ $('Offline Evaluator').item.json.output.match_quality }}",
+              "type": "number"
+            },
+            {
+              "id": "id-9",
+              "name": "offline_comment",
+              "value": "={{ $('Offline Evaluator').item.json.output.comment }}",
+              "type": "string"
+            },
+            {
+              "id": "id-10",
+              "name": "online_score",
+              "value": "={{ $('Parse Review Result').item.json.score }}",
+              "type": "number"
+            },
+            {
+              "id": "id-11",
+              "name": "online_comment",
+              "value": "={{ $('Parse Review Result').item.json.comment }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "74391930-5988-44bb-8f1d-db2d87b044ec",
+      "name": "Prepare Final Data with Both Evaluators",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6944,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4c7e3519-642e-49da-a749-7ea20b1a63e7",
+              "name": "dataset",
+              "value": "{\n  \"dataset\": [\n  {\n    \"prompt\": \"У нас падает повторная покупка на маркетплейсе. Нужно понять, что влияет на возврат клиентов и как повысить retention.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Обеспечить рост повторных покупок на маркетплейсе за счет улучшения клиентского опыта, ассортимента и коммуникаций.\\nType: Причинно-следственный анализ с когортным анализом и сегментацией\\n💡 HYPOTHESES (5)\\n1. Снижение повторных покупок связано с долгой доставкой и нарушением обещанного срока.\\n2. Недостаточное качество товара по отзывам снижает доверие и уменьшает вероятность повторного заказа.\\n3. Пользователи с низкой частотой заказов хуже реагируют на промо и требуют отдельной коммуникации.\\n4. Проблемы с возвратами и возвратом денег негативно влияют на лояльность.\\n5. Слабая персонализация рекомендаций приводит к снижению вовлеченности и повторных покупок.\\n📊 KEY METRICS\\nPrimary: Repeat Purchase Rate, Customer Retention Rate, Share of Returning Customers\\nSecondary: Delivery Time, Refund Rate, CSAT, NPS, Average Order Value, Promo Redemption Rate\\n📁 DATA\\nSources: Заказы, доставки, возвраты, отзывы, CRM, промо-кампании\\nTables: Orders, Deliveries, Returns, Reviews, Customers, CRMInteractions, Promotions\\nTime: 2022-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Новые клиенты\\n2. Повторные покупатели\\n3. Спящие клиенты\\n4. Клиенты с высоким AOV\\n5. Чувствительные к скидкам\\n📋 PLAN (5 steps)\\n1. Построить когорты по первой покупке и измерить долю повторного заказа по месяцам.\\n2. Сравнить сроки доставки, качество товара и возвраты между повторными и ушедшими клиентами.\\n3. Оценить влияние промо, персонализации и рекомендаций на вероятность следующего заказа.\\n4. Выделить сегменты с наибольшим падением retention и проверить их болевые точки.\\n5. Сформировать гипотезы по улучшению доставки, ассортимента и коммуникации с клиентами.\\n📈 VISUALIZATIONS\\n1. Cohort Chart — анализ повторных покупок по когортам\\n2. Bar Chart — сравнение retention по сегментам\\n3. Scatter Plot — связь доставки и повторных заказов\\n4. Funnel Chart — путь от первого заказа до повторной покупки\\n5. Heatmap — причины возвратов по категориям и регионам\"\n  },\n  {\n    \"prompt\": \"Нужно разобраться, почему у нас просела конверсия из визита в заявку в мобильном приложении банка.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Выявить причины падения конверсии из визита в заявку в мобильном приложении банка и определить точки улучшения воронки.\\nType: Воронка с анализом UX, когорт и сегментацией\\n💡 HYPOTHESES (5)\\n1. Конверсия падает из-за сложного и длинного сценария заполнения заявки.\\n2. Пользователи отваливаются на этапе авторизации или верификации личности.\\n3. Технические ошибки и медленная загрузка экранов увеличивают отказ.\\n4. Разные сегменты пользователей имеют разный уровень доверия к продукту и мотивацию.\\n5. Влияние пуш-уведомлений и рекламных кампаний на качество трафика отличается по каналам.\\n📊 KEY METRICS\\nPrimary: Visit-to-Application Conversion Rate, Step Conversion Rate, Application Completion Rate\\nSecondary: Time on Step, Crash Rate, Error Rate, Session Duration, Login Success Rate\\n📁 DATA\\nSources: Мобильная аналитика, события приложения, данные авторизации, CRM, маркетинговые источники\\nTables: AppEvents, Sessions, AuthLogs, Customers, CRMInteractions, Campaigns\\nTime: 2023-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Новые пользователи\\n2. Авторизованные пользователи\\n3. Трафик из рекламы\\n4. Органический трафик\\n5. Премиум-клиенты\\n📋 PLAN (5 steps)\\n1. Построить воронку по всем шагам от визита до отправки заявки.\\n2. Найти этапы с максимальным оттоком и проверить ошибки, лаги и UX-проблемы.\\n3. Сравнить конверсию по каналам трафика и типам устройств.\\n4. Проверить поведение новых и возвращающихся пользователей отдельно.\\n5. Сформировать список продуктовых улучшений для самых проблемных шагов.\\n📈 VISUALIZATIONS\\n1. Funnel Chart — основная воронка заявки\\n2. Line Chart — тренд конверсии по неделям\\n3. Bar Chart — сравнение по каналам и устройствам\\n4. Scatter Plot — связь скорости экрана и конверсии\\n5. Heatmap — отток по шагам и сегментам\"\n  },\n  {\n    \"prompt\": \"Снизилась вовлеченность пользователей в образовательном приложении. Нужно понять, какие уроки и функции не удерживают аудиторию.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Повысить вовлеченность в образовательном приложении за счет улучшения контента, сценариев обучения и продуктового опыта.\\nType: Причинно-следственный анализ с когортами и поведенческой сегментацией\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: LessonEvents, UserProgress, Subscriptions, PushEvents, AppSessions, Ratings\\nTime: 2022-06-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Новички\\n2. Активные ученики\\n3. Спящие пользователи\\n4. Платящие пользователи\\n5. Мобильные пользователи\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"У клиентов SaaS резко вырос churn. Нужно понять, какие признаки оттока самые сильные.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Снизить churn в SaaS-продукте через выявление факторов оттока и улучшение продуктовой активации.\\nType: Причинно-следственный анализ с моделированием оттока\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: Users, Accounts, Subscriptions, ProductEvents, SupportTickets, BillingEvents\\nTime: 2021-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Trial users\\n2. Paid customers\\n3. Командные аккаунты\\n4. Клиенты с низкой активностью\\n5. Enterprise-клиенты\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"Нужно понять, почему у нас падает средний чек в e-commerce.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Выявить драйверы снижения среднего чека и определить, какие сегменты, категории и промо на него влияют.\\nType: Факторный анализ среднего чека с сегментацией\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: Orders, Carts, Promotions, Catalog, Inventory, Customers, OrderItems\\nTime: 2023-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Покупатели со скидкой\\n2. Покупатели без скидки\\n3. Новые клиенты\\n4. Повторные клиенты\\n5. Высокочастотные покупатели\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"У нас низкая конверсия из лидов в сделки в B2B-продажах. Нужно найти узкие места в sales funnel.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Повысить конверсию в B2B-продажах через анализ лидов, этапов сделки и эффективности менеджеров.\\nType: Воронка продаж с анализом менеджеров и источников лидов\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: Leads, Deals, SalesActivities, Calls, Meetings, Proposals, Customers\\nTime: 2022-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Inbound leads\\n2. Outbound leads\\n3. Крупные сделки\\n4. Малые сделки\\n5. Отраслевые сегменты\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"Падает вовлеченность в мобильном банке после обновления интерфейса. Нужно понять, что сломалось.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Оценить влияние обновления интерфейса на вовлеченность, стабильность и ключевые пользовательские сценарии мобильного банка.\\nType: До/после анализ с UX и технической диагностикой\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: AppEvents, Crashes, Devices, Users, Reviews, AppVersions\\nTime: 2024-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. iOS users\\n2. Android users\\n3. Старые устройства\\n4. Новые пользователи\\n5. Пользователи 50+\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"Нужно понять, почему растет доля просрочек по кредитам.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Выявить факторы роста просрочек и определить группы клиентов с наибольшим кредитным риском.\\nType: Риск-анализ с сегментацией и когортами\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: CreditApplications, Payments, RiskScores, Notifications, Collections, Customers\\nTime: 2021-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Новые заемщики\\n2. Повторные заемщики\\n3. High DTI\\n4. Пользователи с просрочками\\n5. Крупные кредиты\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"Нужно выяснить, почему упал NPS после запуска новой доставки.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Понять влияние новой модели доставки на NPS, сроки, качество и удовлетворенность клиентов.\\nType: Причинно-следственный анализ качества доставки\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: Orders, Deliveries, Couriers, SupportTickets, Reviews, Zones\\nTime: 2024-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Городские зоны\\n2. Пригород\\n3. Премиум-клиенты\\n4. Частые покупатели\\n5. Новые клиенты\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"У нас резко выросла нагрузка на поддержку. Нужно понять, какие темы обращений создают очередь.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Снизить нагрузку на поддержку через анализ тем обращений, времени решения и причин повторных контактов.\\nType: Анализ обращений в поддержку с тематической кластеризацией\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: SupportTickets, TicketMessages, KnowledgeBase, Customers, SLA, Channels\\nTime: 2023-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Чат\\n2. Звонки\\n3. Почта\\n4. VIP-клиенты\\n5. Пользователи с повторными тикетами\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"Нужно понять, почему падает активность в подписочном сервисе для медиа.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Увеличить активность и удержание в медиа-сервисе за счет анализа контента, персонализации и поведения пользователей.\\nType: Когортный и контентный анализ поведения\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: ContentViews, Sessions, Subscriptions, Recommendations, Ratings, Users\\nTime: 2022-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Новые подписчики\\n2. Платящие подписчики\\n3. Неактивные подписчики\\n4. Любители короткого контента\\n5. Любители длинного контента\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"В интернет-магазине упал процент успешных оплат. Нужно понять причины неуспешных транзакций.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Выявить причины падения payment success rate и определить, какие провайдеры, регионы и сценарии дают максимум отказов.\\nType: Платежный анализ с диагностикой отказов\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: Payments, PaymentAttempts, Orders, Gateways, Cards, Refunds\\nTime: 2023-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Кредитные карты\\n2. Дебетовые карты\\n3. Мобильные платежи\\n4. Пользователи повторных попыток\\n5. Высокие чеки\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"Нужно понять, почему ухудшились продажи в одном регионе относительно остальных.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Провести региональный анализ продаж и выявить, какие факторы — спрос, ассортимент, логистика или конкуренция — привели к просадке.\\nType: Региональный факторный анализ продаж\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: Sales, Traffic, Deliveries, Inventory, Prices, Competitors, Customers\\nTime: 2022-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Регион А\\n2. Регион Б\\n3. Городские районы\\n4. Сельские районы\\n5. Высокочастотные покупатели\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"Мы хотим снизить отток подписчиков стримингового сервиса. Нужен план анализа.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Снизить отток подписчиков стримингового сервиса через анализ контента, вовлеченности и платежного поведения.\\nType: Анализ churn с когортами и контентными предпочтениями\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: Subscriptions, WatchHistory, Recommendations, Payments, Devices, Regions\\nTime: 2022-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Trial users\\n2. Paid users\\n3. Family plans\\n4. Single users\\n5. Редко активные пользователи\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"Нужно понять, почему у нас вырос CAC в performance-маркетинге.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Провести анализ роста CAC и определить, какие каналы, кампании и сегменты аудитории стали дороже.\\nType: Маркетинговый факторный анализ CAC\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: Campaigns, AdClicks, Impressions, Sessions, Conversions, Orders\\nTime: 2023-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Search traffic\\n2. Social traffic\\n3. Retargeting\\n4. New audience\\n5. Returning audience\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"Нужно понять, почему пользователи не доходят до первой ценности в нашем B2B SaaS.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Определить, где пользователи теряют первую ценность, и сократить время до активации в B2B SaaS-продукте.\\nType: Активационный анализ с воронкой и когортами\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: ProductEvents, OnboardingSteps, Users, Accounts, Roles, HelpCenter\\nTime: 2022-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Trial users\\n2. New accounts\\n3. Admins\\n4. End users\\n5. Accounts without activation\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"Падает конверсия в покупку после добавления обязательной регистрации.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Оценить влияние обязательной регистрации на purchase conversion и найти, на каком шаге пользователи отказываются.\\nType: Воронка с анализом friction points\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: WebEvents, Registrations, AuthLogs, Orders, FormErrors, Sessions\\nTime: 2024-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Guest visitors\\n2. Logged-in users\\n3. Mobile users\\n4. Desktop users\\n5. Traffic from ads\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"Нужно понять, почему в приложении выросло число отмененных броней.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Выявить причины отмены бронирований и определить, какие сегменты и этапы процесса дают максимум потерь.\\nType: Анализ отмен броней с сегментацией и причинно-следственными гипотезами\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: Bookings, Confirmations, Payments, Availability, SupportTickets, Reviews\\nTime: 2023-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Новые пользователи\\n2. Повторные пользователи\\n3. Бронирования без предоплаты\\n4. С задержкой подтверждения\\n5. Премиум-бронирования\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"Нужно понять, почему снизилась выручка у подписочного fitness-приложения.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Разложить падение выручки на драйверы подписки, удержания и апсейла в fitness-приложении.\\nType: Финансово-продуктовый анализ выручки\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: Subscriptions, Payments, Workouts, Promotions, Users, Plans\\nTime: 2022-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Trial users\\n2. Платящие пользователи\\n3. Пользователи скидок\\n4. Долгосрочные подписчики\\n5. Низкоактивные пользователи\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"У нас падает конверсия в заявку на ипотеку. Нужно понять, на каком этапе люди отваливаются.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Построить и проанализировать ипотечную воронку, чтобы найти этапы с максимальным оттоком и причины отказа.\\nType: Воронка продаж с анализом кредитного продукта\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: MortgageApplications, Documents, Underwriting, Calls, Offers, Rejections\\nTime: 2022-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Новые заемщики\\n2. Повторные клиенты\\n3. Высокий первоначальный взнос\\n4. Низкий доход\\n5. Проблемные заявки\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"Нужно понять, почему увеличились возвраты товаров на fashion-маркетплейсе.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Выявить драйверы возвратов в fashion и определить, какие категории, размеры и сегменты дают максимум проблем.\\nType: Анализ возвратов с товарной и сегментной декомпозицией\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: Orders, Returns, Products, Sizes, Reviews, PackagingIssues\\nTime: 2023-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Women fashion\\n2. Men fashion\\n3. New customers\\n4. Repeat customers\\n5. Large-size segment\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"Нужно понять, почему у нас снизилась эффективность email-рассылок.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Провести анализ эффективности email-кампаний и определить, какие темы, сегменты и времена отправки дают лучший результат.\\nType: Маркетинговый анализ рассылок с сегментацией аудитории\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: EmailCampaigns, EmailEvents, Customers, Orders, Segments, Unsubscribes\\nTime: 2023-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Новые подписчики\\n2. Активные клиенты\\n3. Спящие клиенты\\n4. VIP-клиенты\\n5. Получатели с низким open rate\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"У нас падает конверсия в оплату в онлайн-школе после бесплатного урока.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Понять, что мешает переводу из бесплатного урока в оплату, и определить, какие сегменты лучше конвертируются.\\nType: Анализ образовательной воронки и мотивации\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: Lessons, Payments, Students, Offers, CourseEvents, Segments\\nTime: 2022-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Новые ученики\\n2. Дошедшие до конца урока\\n3. Просмотревшие только часть\\n4. Получатели скидок\\n5. Сегмент с высокой вовлеченностью\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"Нужно разобраться, почему выросла доля отмененных поездок в райд-хейлинге.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Выявить факторы отмен поездок и определить, какие зоны, время суток и сценарии создают максимум отказов.\\nType: Анализ отмен в сервисе поездок с географией и временем\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: Rides, DriverLocations, Requests, Cancellations, Prices, Zones\\nTime: 2023-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Часы пик\\n2. Ночные поездки\\n3. Новые пользователи\\n4. Зоны с дефицитом водителей\\n5. Пользователи с повторными отменами\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"У нас просела конверсия из пробной версии в платную в B2C-приложении.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Определить, какие действия пробных пользователей повышают шанс оплаты, и сократить провал между trial и подпиской.\\nType: Анализ trial-to-paid conversion с когортами и продуктовой сегментацией\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: Trials, ProductEvents, Notifications, Payments, Users, Segments\\nTime: 2022-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Активные trial users\\n2. Неактивные trial users\\n3. Пользователи с push\\n4. Пользователи без push\\n5. Сегмент high intent\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"Нужно понять, почему у нас ухудшилась маржа в интернет-магазине.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Разложить падение маржи на влияние цен, скидок, себестоимости, логистики и возвратов.\\nType: Финансово-операционный анализ маржинальности\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: Orders, Costs, Logistics, Returns, Promotions, Products\\nTime: 2023-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Высокомаржинальные категории\\n2. Низкомаржинальные категории\\n3. Заказы со скидкой\\n4. Региональные доставки\\n5. Возвратные клиенты\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"В мобильном приложении доставки выросло число незавершенных заказов.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Выяснить, на каком этапе пользователи бросают заказ, и определить причины роста незавершенных заказов.\\nType: Воронка заказа с UX и операционным анализом\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: AppEvents, Carts, Orders, DeliverySlots, Addresses, Errors\\nTime: 2024-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Новые пользователи\\n2. Повторные пользователи\\n3. Городские районы\\n4. Пригород\\n5. Пользователи мобильного приложения\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"Нужно понять, почему у нас растет число отказов в колл-центре до соединения с оператором.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Выявить факторы абандона звонков и определить, в какие часы и по каким темам клиентам сложнее дождаться ответа.\\nType: Операционный анализ call center с очередями и SLA\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: Calls, Queues, Agents, IVR, Topics, CSATSurveys\\nTime: 2023-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Пиковые часы\\n2. Ночные смены\\n3. VIP-клиенты\\n4. Повторные звонки\\n5. Сложные темы\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"Нужно понять, почему ухудшилась конверсия в активацию у новых пользователей продукта.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Определить, какие первые действия и каналы приводят пользователя к активации, а какие создают провал.\\nType: Активационный анализ нового user journey\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: Users, Signups, OnboardingEvents, TrafficSources, HelpCenter, ProductEvents\\nTime: 2023-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Organic users\\n2. Paid users\\n3. Mobile users\\n4. Desktop users\\n5. Users from campaigns\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  },\n  {\n    \"prompt\": \"Нужно понять, почему клиенты жалуются на неочевидные комиссии в кредитном продукте и как это влияет на повторные обращения.\",\n    \"ideal_answer\": \"📊 ANALYTICS PLAN\\n🎯 PROBLEM\\nGoal: Повысить прозрачность кредитного продукта и снизить негатив от комиссий, чтобы увеличить доверие и повторные обращения.\\nType: Причинно-следственный анализ клиентских жалоб с сегментацией\\n💡 HYPOTHESES (5)\\n1. Проблема проявляется сильнее в наиболее ценных или наиболее чувствительных сегментах.\\n2. На метрику влияют качество продукта, скорость сценария и поведение пользователей.\\n3. Часть падения связана с внешними факторами или изменением каналов привлечения.\\n4. Проблема имеет несколько причин, поэтому нужен разрез по сегментам и этапам воронки.\\n5. Есть измеримые точки улучшения, которые можно проверить на данных и затем подтвердить экспериментом.\\n📊 KEY METRICS\\nPrimary: Primary KPI, Conversion Rate, Retention Rate\\nSecondary: Secondary KPI, Error Rate, CSAT, NPS, Session Depth\\n📁 DATA\\nSources: События продукта, CRM, транзакции, поддержка, маркетинг, справочники\\nTables: CreditApplications, Contracts, Complaints, SupportTickets, CRMInteractions, SurveyResults\\nTime: 2021-01-01 - 2024-12-31\\n👥 SEGMENTS\\n1. Новые заемщики\\n2. Повторные заемщики\\n3. Низкий доход\\n4. Высокая долговая нагрузка\\n5. Пользователи с жалобами\\n📋 PLAN (5 steps)\\n1. Собрать метрики по времени и сегментам, чтобы увидеть, где именно началось ухудшение.\\n2. Проверить отток, конверсию, ошибки и поведенческие паттерны на ключевых этапах.\\n3. Сравнить проблему между сегментами, каналами, устройствами или регионами.\\n4. Выделить основные драйверы падения и сформулировать проверяемые гипотезы.\\n5. Подготовить план улучшений и список метрик для контроля результата.\\n📈 VISUALIZATIONS\\n1. Line Chart — динамика ключевых метрик\\n2. Bar Chart — сравнение по сегментам\\n3. Scatter Plot — связь факторов и KPI\\n4. Heatmap — проблемные зоны и сегменты\\n5. Funnel Chart — воронка основного сценария\"\n  }\n]\n}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2c3130c6-aed5-4e75-9bd3-5cb8faf4d7f5",
+      "name": "Dataset JSON",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5600,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "993b3605-98cf-4fb5-a87e-ac2bf08b963a",
+      "name": "Combine Format and Dataset",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        5824,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const reviewOutput = $input.item.json.output;\nlet score = 0;\nlet comment = \"\";\n\nif (typeof reviewOutput === \"string\") {\n  try {\n    const parsed = JSON.parse(reviewOutput);\n    score = parsed.score;\n    comment = parsed.comment;\n  } catch(e) {\n    score = 0;\n    comment = \"Ошибка парсинга оценки\";\n  }\n} else if (typeof reviewOutput === \"object\" && reviewOutput !== null) {\n  score = reviewOutput.score || 0;\n  comment = reviewOutput.comment || \"Нет комментария\";\n}\n\nreturn {\n  json: {\n    score: score,\n    comment: comment,\n    original_plan: JSON.stringify($('Suggest Visualizations').item.json.output)\n  }\n};"
+      },
+      "id": "e85652f7-e90c-4d79-939f-157479b76a1d",
+      "name": "Parse Review Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5376,
+        1216
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "<b>🤖 Привет!</b> Я бот-помощник для анализа бизнес-проблем.\n\nИспользуйте команды из меню: /form_problem, /example, /help",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "2c358094-31ee-44aa-b5ed-13d146408652",
+      "name": "Send Start Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        928,
+        304
+      ],
+      "webhookId": "6bf7bd63-0891-44fd-8f7c-b2e2d503e789",
+      "credentials": {
+        "telegramApi": {
+          "id": "bwQNSMiONov0LKKj",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "<b>🆘 Помощь</b>\n\n<b>Доступные команды:</b>\n/start - Главное меню\n/form_problem - Инструкция по работе\n/example - Посмотреть пример\n/help - Эта справка\n\n<b>Как пользоваться:</b>\n1. Нажмите /form_problem для инструкций\n2. Отправьте текст вашей проблемы\n3. Бот проанализирует и даст рекомендации",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "4c434c38-4578-4537-b40b-12e869d12843",
+      "name": "Send Help Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        928,
+        496
+      ],
+      "webhookId": "b7cd8d8e-6369-45e8-89da-65e0dedacff4",
+      "credentials": {
+        "telegramApi": {
+          "id": "bwQNSMiONov0LKKj",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "<b>📊 Пример бизнес-проблемы</b>\n\n<b>Кейс: Интернет-магазин электроники</b>\n\n<b>Описание проблемы:</b>\nЗа последние 2 недели количество брошенных корзин выросло на 40%.\nКлиенты добавляют товары, но не оформляют заказ на этапе оплаты.\nОсобенно часто это происходит с товарами дороже 300$.\n\n<b>Бизнес-метрики:</b>\n📉 Потерянная выручка: ~15000$ в неделю\n📉 Конверсия в оплату: упала с 3.2% до 1.9%\n📉 NPS снизился с 45 до 32\n\n<b>Что будет делать бот:</b>\n1. Классифицирует проблему\n2. Оценит срочность\n3. Предложит корневые причины\n4. Даст пошаговый план действий",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "6368483d-4a96-427f-9e12-39ce5b464c24",
+      "name": "Send Example Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        928,
+        688
+      ],
+      "webhookId": "60d2bfb1-bd7c-4c27-bb8f-237f34a60971",
+      "credentials": {
+        "telegramApi": {
+          "id": "bwQNSMiONov0LKKj",
+          "name": "Telegram account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -1021,7 +1563,7 @@
       "main": [
         [
           {
-            "node": "Check Message Type",
+            "node": "Filter Bot Commands",
             "type": "main",
             "index": 0
           }
@@ -1043,7 +1585,7 @@
       "main": [
         [
           {
-            "node": "Generate Hypotheses",
+            "node": "Check Request Clarity",
             "type": "main",
             "index": 0
           }
@@ -1197,7 +1739,7 @@
       "main": [
         [
           {
-            "node": "Format Response",
+            "node": "Parse Review Result",
             "type": "main",
             "index": 0
           }
@@ -1208,12 +1750,7 @@
       "main": [
         [
           {
-            "node": "Log to Data Table",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Prepare Request State",
+            "node": "Combine Format and Dataset",
             "type": "main",
             "index": 0
           }
@@ -1449,9 +1986,188 @@
           }
         ]
       ]
+    },
+    "Check Request Clarity": {
+      "main": [
+        [
+          {
+            "node": "Send Processing Notification",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Generate Hypotheses",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Request Clarification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Processing Notification": {
+      "main": [
+        []
+      ]
+    },
+    "Filter Bot Commands": {
+      "main": [
+        [
+          {
+            "node": "Send Start Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Help Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Example Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Message Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Offline Evaluator Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Offline Evaluator",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Model - Offline Evaluator": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Offline Evaluator",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Offline Evaluator Schema",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Offline Evaluator Input": {
+      "main": [
+        [
+          {
+            "node": "Offline Evaluator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Offline Evaluator": {
+      "main": [
+        [
+          {
+            "node": "Merge Evaluator Results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Evaluator Results": {
+      "main": [
+        [
+          {
+            "node": "Prepare Final Data with Both Evaluators",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Final Data with Both Evaluators": {
+      "main": [
+        [
+          {
+            "node": "Log to Data Table",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Prepare Request State",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dataset JSON": {
+      "main": [
+        [
+          {
+            "node": "Combine Format and Dataset",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Combine Format and Dataset": {
+      "main": [
+        [
+          {
+            "node": "Prepare Offline Evaluator Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Review Result": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge Evaluator Results",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Dataset JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
@@ -1459,7 +2175,7 @@
     "callerPolicy": "any",
     "availableInMCP": false
   },
-  "versionId": "387bdabb-c120-40d9-bc1e-1b9b112af0f0",
+  "versionId": "1fadd095-2445-487f-b842-e18999107ce8",
   "meta": {
     "instanceId": "18a03f7879ffdda3c50fe25675372ba949a5756f98c20f1edf693c15fd9acc60"
   },
